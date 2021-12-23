@@ -1,0 +1,16 @@
+server:
+  port: 8681
+spring:
+  application:
+    name: pay
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://81.70.77.32:3317/pay?serverTimezone=GMT%2B8&characterEncoding=utf-8
+    username: root
+    password: Rxf9421??
+logging:
+  level:
+    root: info
