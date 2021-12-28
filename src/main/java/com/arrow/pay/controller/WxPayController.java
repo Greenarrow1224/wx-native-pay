@@ -95,9 +95,21 @@ public class WxPayController {
      * @param orderNo
      * @return
      */
-    @GetMapping("/cancel/orderNo")
+    @PostMapping("/cancel/{orderNo}")
     public Result cancel(@PathVariable String orderNo){
         wxPayService.cancel(orderNo);
         return Result.ok().setMessage("订单已取消");
+    }
+
+    @GetMapping("/queryTradeBill/{billDate}/{type}")
+    public Result queryTradeBill(@PathVariable String billDate,@PathVariable String type){
+        String downloadUrl = wxPayService.queryTradeBill(billDate,type);
+        return Result.ok().setMessage("获取账单url成功").data("downloadUrl",downloadUrl);
+    }
+
+    @GetMapping("/downloadBill/{billDate}/{type}")
+    public Result downloadBill(@PathVariable String billDate,@PathVariable  String type){
+        String result = wxPayService.downloadBill(billDate,type);
+        return Result.ok().data("result",result);
     }
 }

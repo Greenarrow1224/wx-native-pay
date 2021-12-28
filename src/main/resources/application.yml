@@ -3,6 +3,12 @@ server:
 spring:
   application:
     name: pay
+  cloud:
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+        port: 8719
+
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
@@ -14,3 +20,6 @@ spring:
 logging:
   level:
     root: info
+time:
+  cron: 0/30 * * * * ?
+  fixed-delay: 5000

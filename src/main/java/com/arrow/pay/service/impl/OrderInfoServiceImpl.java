@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * OrderInfoServiceImpl
@@ -101,9 +102,18 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
      */
     @Override
     public List<OrderInfo> getNoPayOrderByMinutes(int minutes) {
-        Instant instant = Instant.now().minus(Duration.ofMillis(minutes));
+        Instant instant = Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8)).minus(Duration.ofMillis(minutes));
+        log.info("=========>"+instant);
         return baseMapper.selectList(new QueryWrapper<OrderInfo>()
                 .eq("order_status",OrderStatus.NOTPAY.getType()).le("create_time",instant));
 
+    }
+
+    @Override
+    public List<OrderInfo> getNoRefundsOrderByMinutes(int minutes) {
+        Instant instant = Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8)).minus(Duration.ofMillis(minutes));
+        log.info("=========>"+instant);
+        return baseMapper.selectList(new QueryWrapper<OrderInfo>()
+                .eq("order_status",OrderStatus.REFUND_PROCESSING.getType()).le("create_time",instant));
     }
 }

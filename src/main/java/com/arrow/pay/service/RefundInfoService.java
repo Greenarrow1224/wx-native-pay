@@ -26,4 +26,11 @@ public interface RefundInfoService extends IService<RefundInfo> {
      * @param content
      */
     void updateRefund(String content);
+
+    /**
+     * 根据订单编号查询退款编号
+     * @param orderNo
+     * @return
+     */
+    RefundInfo queryRefundByOrderNo(String orderNo);
 }

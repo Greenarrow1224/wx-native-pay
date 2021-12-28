@@ -64,4 +64,12 @@ public interface OrderInfoService extends IService<OrderInfo> {
      * @return
      */
     List<OrderInfo> getNoPayOrderByMinutes(int minutes);
+
+    /**
+     * 获取超过指定时间的未退款订单
+     * @param minutes
+     * @return
+     */
+    List<OrderInfo> getNoRefundsOrderByMinutes(int minutes);
+
 }

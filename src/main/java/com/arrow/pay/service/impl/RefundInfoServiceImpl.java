@@ -85,4 +85,9 @@ public class RefundInfoServiceImpl extends ServiceImpl<RefundInfoMapper, RefundI
         // 更新退款单
         baseMapper.update(refundInfo, new QueryWrapper<RefundInfo>().eq("refund_no", resultMap.get("out_refund_no")));
     }
+
+    @Override
+    public RefundInfo queryRefundByOrderNo(String orderNo) {
+        return baseMapper.selectOne(new QueryWrapper<RefundInfo>().eq("order_no",orderNo));
+    }
 }

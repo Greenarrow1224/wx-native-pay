@@ -74,6 +74,11 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+            <version>2.2.3.RELEASE</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -106,6 +111,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>wx-pay</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

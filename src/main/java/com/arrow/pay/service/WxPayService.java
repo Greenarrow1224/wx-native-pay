@@ -54,7 +54,12 @@ public interface WxPayService {
      */
     void processRefund(Map<String, Object> bodyMap);
 
-
+    /**
+     * 查询退款
+     * @param refundNo
+     * @return
+     */
+    Map<String,Object> queryRefund(String refundNo);
     /**
      * 调用微信接口查询订单
      * @param orderNo
@@ -69,4 +74,20 @@ public interface WxPayService {
      * @param orderNo
      */
     void checkOrderStatus(String orderNo);
+
+    /**
+     * 申请账单
+     * @param billDate
+     * @param type
+     * @return
+     */
+    String queryTradeBill(String billDate, String type);
+
+    /**
+     * 下载账单
+     * @param billDate
+     * @param type
+     * @return
+     */
+    String downloadBill(String billDate, String type);
 }
