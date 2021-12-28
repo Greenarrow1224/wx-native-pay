@@ -59,7 +59,7 @@ public interface WxPayService {
      * @param refundNo
      * @return
      */
-    Map<String,Object> queryRefund(String refundNo);
+    String queryRefund(String refundNo);
     /**
      * 调用微信接口查询订单
      * @param orderNo
@@ -90,4 +90,11 @@ public interface WxPayService {
      * @return
      */
     String downloadBill(String billDate, String type);
+
+    /**
+     *核实退款订单状态
+     * @param refundNo
+     */
+    void checkRefundStatus(String refundNo);
+
 }

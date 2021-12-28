@@ -3,6 +3,7 @@ package com.arrow.pay.service.impl;
 import com.arrow.pay.controller.WxPayController;
 import com.arrow.pay.entity.OrderInfo;
 import com.arrow.pay.entity.RefundInfo;
+import com.arrow.pay.enums.wxpay.WxRefundStatus;
 import com.arrow.pay.mapper.RefundInfoMapper;
 import com.arrow.pay.service.OrderInfoService;
 import com.arrow.pay.service.RefundInfoService;
@@ -15,8 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * RefundInfoServiceImpl
@@ -89,5 +94,11 @@ public class RefundInfoServiceImpl extends ServiceImpl<RefundInfoMapper, RefundI
     @Override
     public RefundInfo queryRefundByOrderNo(String orderNo) {
         return baseMapper.selectOne(new QueryWrapper<RefundInfo>().eq("order_no",orderNo));
+    }
+
+    @Override
+    public List<RefundInfo> getNoRefundOrder(int minutes) {
+        Instant instant = Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8)).minus(Duration.ofMillis(minutes));
+        return baseMapper.selectList(new QueryWrapper<RefundInfo>().eq("refund_status", WxRefundStatus.PROCESSING.getType()).le("create_time",instant));
     }
 }

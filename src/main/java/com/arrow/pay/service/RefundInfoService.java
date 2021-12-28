@@ -5,6 +5,8 @@ import com.arrow.pay.entity.RefundInfo;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * RefundInfoService
  *
@@ -33,4 +35,11 @@ public interface RefundInfoService extends IService<RefundInfo> {
      * @return
      */
     RefundInfo queryRefundByOrderNo(String orderNo);
+
+    /**
+     *找出申请退款超过 minutes分钟并且未成功的退款单
+     * @param minutes
+     * @return
+     */
+    List<RefundInfo> getNoRefundOrder(int minutes);
 }

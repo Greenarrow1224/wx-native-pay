@@ -41,6 +41,7 @@ import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -151,7 +152,7 @@ public class WxPayServiceImpl implements WxPayService {
     }
 
     @Override
-    public Map<String, Object> queryRefund(String refundNo) {
+    public String queryRefund(String refundNo) {
         log.info("调用查询退款API");
         String url = String.format(WxApiType.DOMESTIC_REFUNDS_QUERY.getType(),refundNo);
         url = wxPayConfig.getDomain().concat(url);
@@ -165,14 +166,12 @@ public class WxPayServiceImpl implements WxPayService {
             String bodyAsString = EntityUtils.toString(response.getEntity());
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
-                log.info("查询成功");
-                Gson gson = new Gson();
-                Map<String,Object> hashMap = gson.fromJson(bodyAsString, HashMap.class);
-                return hashMap;
+                log.info("查询退款成功");
+                return bodyAsString;
             } else if (statusCode == HttpStatus.SC_NO_CONTENT) {
-                log.info("微信退款成功，没有响应体");
+                log.info("查询退款成功，没有响应体");
             } else {
-                throw new RuntimeException("退款异常, 响应码 = " + statusCode + ", 退款返回结果 = " + bodyAsString);
+                throw new RuntimeException("查询退款异常, 响应码 = " + statusCode + ", 查询退款返回结果 = " + bodyAsString);
             }
 
         }catch (Exception e){
@@ -413,22 +412,7 @@ public class WxPayServiceImpl implements WxPayService {
             // 记录支付日志
             paymentInfoService.createPaymentInfo(resultString);
         }
-        if (WxTradeState.REFUND.getType().equals(tradeState)){
-            log.warn("核实订单转入退款 ===> {}", orderNo);
-            // 查询商户退款单号
-            RefundInfo refundInfo = refundInfoService.queryRefundByOrderNo(orderNo);
-            if (refundInfo != null){
-                // 调用查询退款订单接口
-                Map<String, Object> bodyMap = this.queryRefund(refundInfo.getRefundNo());
-                // 修改本地订单退款状态
-                String status = bodyMap.get("status").toString();
-                if (status.equals(WxRefundStatus.SUCCESS.getType())){
-                    orderInfoService.updateStatusByOrderNo(orderNo, OrderStatus.REFUND_SUCCESS);
-                }
 
-
-            }
-        }
         if (WxTradeState.NOTPAY.getType().equals(tradeState)){
             log.warn("核实订单未支付 ===> {}", orderNo);
             // 调用关单方法
@@ -437,6 +421,34 @@ public class WxPayServiceImpl implements WxPayService {
             orderInfoService.updateStatusByOrderNo(orderNo,OrderStatus.CLOSED);
 
         }
+
+    }
+
+    @Override
+    public void checkRefundStatus(String refundNo) {
+        log.info("根据退款单号核实退款单状态====> {}",refundNo);
+        String result = this.queryRefund(refundNo);
+        Gson gson = new Gson();
+        Map resultMap = gson.fromJson(result, HashMap.class);
+        String status = resultMap.get("status").toString();
+        String orderNo = resultMap.get("out_trade_no").toString();
+        if (WxRefundStatus.SUCCESS.getType().equals(status)){
+            log.info("核实订单已退款成功====> {}",orderNo);
+            // 更新订单状态为已退款
+            orderInfoService.updateStatusByOrderNo(orderNo,OrderStatus.REFUND_SUCCESS);
+            // 更新退款单
+            refundInfoService.updateRefund(result);
+        }
+        // 核实订单退款异常
+        if (WxRefundStatus.ABNORMAL.getType().equals(status)){
+            log.info("核实订单退款异常====> {}",orderNo);
+            // 更新订单状态为退款异常
+            orderInfoService.updateStatusByOrderNo(orderNo,OrderStatus.REFUND_ABNORMAL);
+            // 更新退款单记录
+            refundInfoService.updateRefund(result);
+        }
+
+
 
     }
 
