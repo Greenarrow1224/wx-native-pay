@@ -9,8 +9,12 @@ public enum PayType {
     /**
      * 微信
      */
-    WXPAY("微信"),
+    WX_NATIVE("微信 Native 支付"),
 
+    /**
+     * 微信公众号支付
+     */
+    WX_H5("微信公众号支付"),
 
     /**
      * 支付宝

@@ -73,6 +73,9 @@ public class WxPayServiceImpl implements WxPayService {
     @Autowired
     private CloseableHttpClient wxPayClient;
 
+    @Autowired
+    private CloseableHttpClient wxPayNoSignClient;
+
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -508,7 +511,7 @@ public class WxPayServiceImpl implements WxPayService {
         //使用 wxPayClient 发送请求得到响应
         CloseableHttpResponse response = null;
         try {
-            response = wxPayClient.execute(httpGet);
+            response = wxPayNoSignClient.execute(httpGet);
             String bodyString = EntityUtils.toString(response.getEntity());
             int statusCode = response.getStatusLine().getStatusCode();
             if (HttpStatus.SC_OK == statusCode){

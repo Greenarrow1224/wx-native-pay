@@ -36,7 +36,7 @@ public class PaymentInfoServiceImpl extends ServiceImpl<PaymentInfoMapper, Payme
         Integer payerTotal = ((Double) amount.get("payer_total")).intValue();
         PaymentInfo paymentInfo = new PaymentInfo();
         paymentInfo.setOrderNo(orderNo)
-        .setPaymentType(PayType.WXPAY.getType())
+        .setPaymentType(PayType.WX_NATIVE.getType())
         .setTransactionId(transactionId)
         .setTradeType(tradeType)
         .setTradeState(tradeState)
